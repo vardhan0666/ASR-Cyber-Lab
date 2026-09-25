@@ -1,0 +1,1 @@
+"""Security primitives: password hashing, JWT handling, auth, permissions."""

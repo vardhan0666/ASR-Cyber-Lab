@@ -1,0 +1,1 @@
+"""API layer package: routers and route-level request/response handling."""

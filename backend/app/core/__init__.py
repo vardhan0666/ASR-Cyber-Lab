@@ -1,0 +1,1 @@
+"""Core cross-cutting utilities: exceptions, logging, validation."""
