@@ -2,258 +2,358 @@
 
 ### Automated Security Reconnaissance & Attack-Surface Reduction Platform
 
-<p align="center">
+ASR-Cyber-Lab is a defensive cybersecurity platform for authorized environments. It discovers exposed assets and services, analyzes security configuration, calculates contextual risk, and generates actionable security reports.
 
-**A portfolio-grade defensive cybersecurity platform for discovering, analyzing, prioritizing, and reporting the attack surface of authorized systems.**
+## Overview
 
-</p>
+ASR-Cyber-Lab provides a complete workflow for authorized security reconnaissance:
 
----
+- Discover exposed hosts and services
+- Enumerate ports and service versions using Nmap
+- Analyze security configuration
+- Enrich findings with vulnerability information
+- Calculate contextual risk scores
+- Manage security findings
+- Generate JSON and PDF reports
+- Maintain audit logs
+- Visualize results through a dark cyber-themed dashboard
+- Display interactive 3D security visualization using Three.js
 
-## 📌 Abstract
+## Key Features
 
-**ASR-Cyber-Lab** is a full-stack defensive cybersecurity platform designed to help security practitioners understand what is exposed in an authorized environment.
+- JWT-based authentication
+- Target management with authorization gates
+- Nmap port and service enumeration
+- Security configuration analysis
+- Vulnerability enrichment
+- Contextual risk scoring
+- Findings and alerts management
+- JSON/PDF report generation
+- Audit logging
+- React + TypeScript dashboard
+- Three.js 3D visualization
 
-The platform provides a controlled workflow for registering authorized targets, performing server-validated Nmap reconnaissance, normalizing discovered hosts/ports/services, analyzing security-relevant configuration information, generating security findings, calculating transparent risk scores, and producing JSON/PDF reports.
+## Security Philosophy
 
-Instead of treating reconnaissance as a one-off command-line operation, ASR-Cyber-Lab turns it into a persistent and auditable security workflow.
-
-> **Core idea:**  
-> **Discover → Analyze → Prioritize → Report → Remediate → Re-scan**
-
----
-
-## ⚠️ Authorized Use & Safety
-
-**ASR-Cyber-Lab is strictly for defensive and authorized security testing.**
-
-Only scan:
+ASR-Cyber-Lab is intended only for authorized defensive security testing, including:
 
 - Systems you own
-- Localhost/lab environments
-- Private infrastructure under your control
-- Systems for which you have explicit authorization
+- Localhost environments
+- Private security labs
+- Authorized CTF/lab environments
+- Systems where you have explicit permission to test
 
-The platform is not designed for:
+The project does **not** aim to provide:
 
 - Unauthorized scanning
 - Credential theft
 - Malware
-- Persistence
-- Evasion
+- Persistence mechanisms
 - Destructive exploitation
-- Attacking third-party infrastructure
+- Evasion techniques
+- Unauthorized access
 
-See [`docs/AUTHORIZED_USE.md`](docs/AUTHORIZED_USE.md) for the project's authorized-use policy.
+The authorization gate is a core part of the reconnaissance lifecycle.
 
----
-
-# 🎯 What This Project Does
-
-ASR-Cyber-Lab follows a complete attack-surface assessment workflow:
+## Architecture
 
 ```text
-Authorized Target
-       │
-       ▼
-Target Validation
-       │
-       ▼
-Nmap Reconnaissance
-       │
-       ▼
-Host Discovery
-       │
-       ▼
-Port & Service Enumeration
-       │
-       ▼
-Security Configuration Analysis
-       │
-       ▼
-Vulnerability Enrichment
-       │
-       ▼
-Finding Generation
-       │
-       ▼
-Risk Scoring
-       │
-       ▼
-Dashboard + Reports
-       │
-       ▼
-Audit Log
+User / Analyst
+      |
+      v
+React Dashboard
+(React + TypeScript + Tailwind + Three.js)
+      |
+      v
+FastAPI API
+      |
+      +--------------------+
+      |                    |
+      v                    v
+Target Management      Scan Engine
+                           |
+                          Nmap
+                           |
+                           v
+                    Result Normalizer
+                           |
+                           v
+                    Security Analysis
+                           |
+                           v
+                      Risk Engine
+                           |
+                           v
+                    Findings / Alerts
+                           |
+                           v
+                    Reports JSON/PDF
+                           |
+                           v
+                       PostgreSQL
+                  (SQLAlchemy + Alembic)
+
+Core Principle:
+Authorization gates the reconnaissance lifecycle.
 ```
 
-### Core capabilities
+## Technology Stack
 
-- 🔐 JWT-based authentication
-- 🎯 Authorized target management
-- 🌐 Host discovery
-- 🔎 Port and service enumeration
-- 🧪 Server-validated Nmap scan profiles
-- ⚙️ Security configuration analysis
-- 🧩 Vulnerability/CVE enrichment architecture
-- 🚨 Finding generation and severity classification
-- 📊 Transparent risk scoring
-- 📄 JSON report generation
-- 📑 PDF report generation
-- 🧾 Audit logging
-- 🗄️ PostgreSQL persistence
-- 🐳 Docker Compose deployment
-- 🖥️ React/TypeScript security dashboard
-- 🌌 Three.js/WebGL cyber interface
+### Frontend
 
----
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Three.js
+- Recharts
+- Axios
+- React Router
 
-# 🧠 Why I Built It
+### Backend
 
-Traditional Nmap output is useful, but raw scan results alone do not provide a complete security-management workflow.
+- Python
+- FastAPI
+- Pydantic
+- SQLAlchemy
+- Alembic
+- PostgreSQL
+- JWT
+- Pytest
 
-ASR-Cyber-Lab was designed to answer:
+### Security
 
-> **"What is exposed, how important is it, what security evidence do we have, how risky is it, and can we produce an auditable report?"**
-
-The project combines cybersecurity concepts with full-stack software engineering:
-
-**Cybersecurity + Networking + Backend Engineering + Database Design + Frontend Engineering + DevOps + Security Reporting**
-
----
-
-# 🏗️ Architecture
-
-```text
-                         ┌─────────────────────────┐
-                         │      React Frontend     │
-                         │ Dashboard / Targets /   │
-                         │ Scans / Findings /      │
-                         │ Reports / Audit Logs    │
-                         └────────────┬────────────┘
-                                      │
-                                  HTTP / JWT
-                                      │
-                                      ▼
-                         ┌─────────────────────────┐
-                         │       FastAPI API       │
-                         │ Authentication / Routes │
-                         │ Validation / Services   │
-                         └────────────┬────────────┘
-                                      │
-                 ┌────────────────────┼────────────────────┐
-                 │                    │                    │
-                 ▼                    ▼                    ▼
-        ┌────────────────┐   ┌────────────────┐   ┌────────────────┐
-        │ PostgreSQL     │   │ Scan Engine    │   │ Risk / Finding │
-        │ Persistence    │   │ Nmap           │   │ Analysis       │
-        └────────────────┘   └───────┬────────┘   └────────────────┘
-                                     │
-                                     ▼
-                           ┌────────────────────┐
-                           │ Hosts / Ports /    │
-                           │ Services / Evidence│
-                           └─────────┬──────────┘
-                                     │
-                                     ▼
-                           ┌────────────────────┐
-                           │ JSON / PDF Reports │
-                           │ + Audit Events     │
-                           └────────────────────┘
-```
-
----
-
-# 🛠️ Technology Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React, TypeScript, Vite |
-| UI | Tailwind CSS |
-| Visualization | Recharts |
-| 3D UI | Three.js / WebGL |
-| API | Python, FastAPI |
-| Validation | Pydantic |
-| ORM | SQLAlchemy |
-| Migrations | Alembic |
-| Database | PostgreSQL |
-| Reconnaissance | Nmap |
-| Authentication | JWT |
-| Testing | Pytest, Vitest |
-| Infrastructure | Docker, Docker Compose |
-| Version Control | Git + GitHub |
-
----
-
-# 🚀 Installation & Running
-
-## Prerequisites
-
-Install:
-
-- Git
-- Docker Desktop
-- Node.js
-- Python 3.10+
 - Nmap
+- Npcap
+
+### Infrastructure
+
+- Docker
+- Docker Compose
+- Git
+- GitHub
+
+## System Requirements
+
+Supported environments:
+
+- Windows 10/11 64-bit
+- Linux
+- macOS
+
+The project is primarily tested on Windows.
+
+## Required Software
+
+### Git 2.x+
 
 Verify:
 
-```powershell
+```bash
 git --version
+```
+
+Download:
+https://git-scm.com/downloads
+
+### Docker Desktop / Docker Engine
+
+Recommended:
+
+- Docker Engine 29.x
+- Docker Compose v2.x
+
+Verify:
+
+```bash
 docker --version
+docker compose version
+```
+
+Download:
+https://www.docker.com/products/docker-desktop/
+
+### Node.js 20 LTS+
+
+The project was also developed using Node.js 24.x.
+
+Verify:
+
+```bash
 node --version
+npm --version
+```
+
+Download:
+https://nodejs.org/
+
+### Python 3.10.x
+
+Verify:
+
+```bash
 python --version
+```
+
+Download:
+https://www.python.org/downloads/
+
+### Nmap 7.90+
+
+The project has been tested with Nmap 7.99.x.
+
+Verify:
+
+```bash
 nmap --version
 ```
 
----
+Download:
+https://nmap.org/download.html
 
-## 1. Clone the repository
+On Windows, install Npcap and make sure Nmap is available in PATH.
 
-```powershell
+## Project Structure
+
+```text
+ASR-Cyber-Lab/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── main.py
+│   │
+│   ├── migrations/
+│   ├── tests/
+│   ├── reports_output/
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── ...
+│   │
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   └── Dockerfile
+│
+├── docs/
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+## Installation
+
+Clone the repository:
+
+```bash
 git clone https://github.com/vardhan0666/ASR-Cyber-Lab.git
 cd ASR-Cyber-Lab
 ```
 
----
+## Configuration
 
-## 2. Configure environment variables
+Create the `.env` file.
 
-The real `.env` file is intentionally **not committed to GitHub**.
+### Windows CMD
 
-Create your local environment file from the example:
+```cmd
+copy .env.example .env
+```
+
+### Windows PowerShell
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Then edit `.env` and configure the local database, backend, frontend, and authentication settings.
+### Linux/macOS
+
+```bash
+cp .env.example .env
+```
+
+Configure the environment variables:
+
+```env
+ENVIRONMENT=development
+LOG_LEVEL=INFO
+
+POSTGRES_USER=your_database_user
+POSTGRES_PASSWORD=your_strong_database_password
+POSTGRES_DB=asr_cyber_lab
+POSTGRES_PORT=5433
+
+DATABASE_URL=your_database_connection_string
+
+SECRET_KEY=your_random_secret_key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+BACKEND_PORT=8001
+
+CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+
+NMAP_PATH=nmap
+NMAP_TIMEOUT_SECONDS=600
+
+AI_ENABLED=false
+AI_PROVIDER=none
+AI_API_KEY=
+
+INITIAL_ADMIN_EMAIL=admin@localhost.com
+INITIAL_ADMIN_PASSWORD=your_strong_admin_password
+INITIAL_ADMIN_FULL_NAME=Administrator
+
+FRONTEND_PORT=5173
+VITE_API_BASE_URL=http://localhost:8001
+```
 
 **Never commit `.env` to GitHub.**
 
----
+The repository ignores:
 
-## 3. Start Docker services
+```text
+.env
+.env.local
+.env.*.local
+```
+
+## Running the Project
+
+### Start Backend and Database
 
 From the project root:
 
-```powershell
+```bash
 docker compose up -d
 ```
 
-Check containers:
+Check running containers:
 
-```powershell
+```bash
 docker ps
 ```
 
----
+Check backend health:
 
-## 4. Verify the backend
+```bash
+curl http://localhost:8001/api/health
+```
 
-The configured development backend runs on port `8001`.
-
-PowerShell:
+On Windows PowerShell:
 
 ```powershell
 curl.exe http://localhost:8001/api/health
@@ -268,293 +368,765 @@ Expected response:
 }
 ```
 
----
+### Start Frontend
 
-## 5. Start the frontend
+Open another terminal:
 
-Open a second terminal:
-
-```powershell
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Vite will display the local URL, normally:
+Vite normally starts at:
 
 ```text
 http://localhost:5173
 ```
 
-If that port is already occupied, Vite may automatically select another port such as `5174`.
-
----
-
-# 🔄 Typical Usage
-
-1. Sign in to the application.
-2. Create an assessment target.
-3. Mark the target as authorized.
-4. Select an approved scan profile.
-5. Start the scan.
-6. Review discovered hosts.
-7. Review ports and services.
-8. Review generated security findings.
-9. Inspect severity and risk score.
-10. Generate a JSON or PDF report.
-11. Review audit logs.
-12. Remediate issues in the authorized environment.
-13. Re-scan to verify the result.
-
----
-
-# 🧪 Demonstrated Local-Lab Test
-
-The platform has been tested against an authorized localhost environment:
+or:
 
 ```text
-Target:       127.0.0.1
-Profile:      Standard
-Host:         localhost
-Service:      Uvicorn / HTTP
-Port:         TCP/8000
-Finding:      Service-version information disclosure
-Severity:     Informational
-Risk Score:   5.0 / 100
+http://localhost:5174
 ```
 
-The workflow successfully demonstrated:
+if port 5173 is already in use.
+
+## Complete Startup Workflow
+
+### Terminal 1
+
+```bash
+docker compose up -d
+```
+
+### Terminal 2
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Then open the Vite URL shown in the terminal.
+
+Log in using the initial administrator credentials configured in `.env`.
+
+## Using the Application
+
+The normal workflow is:
 
 ```text
-Target
+Login
   ↓
-Authorization
+Dashboard
   ↓
-Nmap Scan
+Create Target
   ↓
-Host Discovery
+Confirm Authorization
   ↓
-Service Discovery
+Select Scan Profile
   ↓
-Finding
+Start Scan
   ↓
-Risk Score
+Monitor Scan
   ↓
-JSON/PDF Report
+Review Hosts
   ↓
-Audit Log
+Review Services
+  ↓
+Review Findings
+  ↓
+Review Risk
+  ↓
+Generate Report
+  ↓
+Review Audit Logs
 ```
 
----
+## Running a Security Scan
 
-# 📊 Risk Model
-
-The platform uses a transparent risk-oriented model rather than hiding the reasoning behind an unexplained score.
-
-Risk can consider factors such as:
-
-- Finding severity
-- Asset importance
-- Exposure characteristics
-- Security evidence
-- Vulnerability information where available
-
-The goal is to make the result explainable:
-
-> **A security score should help a defender understand why something deserves attention.**
-
-See [`docs/RISK_METHODOLOGY.md`](docs/RISK_METHODOLOGY.md).
-
----
-
-# 📁 Repository Structure
+For the first test, use an authorized local target:
 
 ```text
-ASR-Cyber-Lab/
-│
-├── backend/
-│   ├── app/
-│   ├── tests/
-│   └── ...
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   └── ...
-│
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── INSTALLATION.md
-│   ├── CONFIGURATION.md
-│   ├── API.md
-│   ├── DATABASE.md
-│   ├── SECURITY_MODEL.md
-│   ├── AUTHORIZED_USE.md
-│   ├── SCANNING_WORKFLOW.md
-│   ├── RISK_METHODOLOGY.md
-│   ├── TESTING.md
-│   ├── TROUBLESHOOTING.md
-│   └── LIMITATIONS.md
-│
-├── docker-compose.yml
-├── .env.example
-├── .gitignore
-├── AI_BUILD_STATE.md
-└── README.md
+127.0.0.1
 ```
 
----
+or:
 
-# 🧪 Testing
+```text
+localhost
+```
 
-Backend tests:
+Recommended first scan profile:
+
+```text
+Standard
+```
+
+Only scan systems for which you have explicit authorization.
+
+## Example Local Validation
+
+A typical local validation can discover:
+
+```text
+Target: 127.0.0.1
+Port: 8000/tcp
+Service: Uvicorn
+```
+
+An informational finding may report:
+
+```text
+Service version information disclosed: Uvicorn
+```
+
+An example risk score may be:
+
+```text
+5.0 / 100
+```
+
+Exact results depend on the services running on the local machine.
+
+## Findings and Risk
+
+Severity levels include:
+
+```text
+INFO
+LOW
+MEDIUM
+HIGH
+CRITICAL
+```
+
+Findings can contain:
+
+- Category
+- Severity
+- Description
+- Evidence
+- Risk Score
+- Status
+- Remediation
+
+The risk engine provides contextual scoring rather than treating every exposed service as equally dangerous.
+
+## Reports
+
+The platform supports:
+
+- JSON reports
+- PDF reports
+
+Reports are generated from scan results and stored in the local report output directory.
+
+## Audit Logs
+
+Important audit events include:
+
+```text
+target.created
+target.authorization_changed
+scan.created
+scan.completed
+report.generated
+```
+
+Audit logging helps track security-relevant actions performed through the platform.
+
+## Testing
+
+### Backend Health Check
+
+```bash
+curl http://localhost:8001/api/health
+```
+
+Windows PowerShell:
 
 ```powershell
-docker compose exec backend pytest
+curl.exe http://localhost:8001/api/health
 ```
 
-Frontend build:
+### Frontend Build
 
-```powershell
+```bash
 cd frontend
 npm run build
 ```
 
-For the complete testing procedure, see:
+### Preview Production Build
 
-[`docs/TESTING.md`](docs/TESTING.md)
+```bash
+npm run preview
+```
 
----
+### Backend Tests
 
-# 🐳 Useful Docker Commands
+Run the backend test suite according to the configured project test setup.
 
-Start:
+## Docker Commands
 
-```powershell
+Start services:
+
+```bash
 docker compose up -d
+```
+
+Rebuild and start:
+
+```bash
+docker compose up -d --build
+```
+
+Restart:
+
+```bash
+docker compose restart
 ```
 
 View containers:
 
-```powershell
+```bash
 docker ps
 ```
 
 View backend logs:
 
-```powershell
+```bash
+docker compose logs backend
+```
+
+Follow backend logs:
+
+```bash
 docker compose logs -f backend
 ```
 
-View all logs:
+View PostgreSQL logs:
 
-```powershell
-docker compose logs -f
+```bash
+docker compose logs postgres
 ```
 
-Stop:
+Stop containers:
 
-```powershell
+```bash
 docker compose down
 ```
 
+## Troubleshooting
+
+### PostgreSQL Port 5432 Conflict
+
+If PostgreSQL is already using port 5432, configure:
+
+```env
+POSTGRES_PORT=5433
+```
+
+Then recreate the services.
+
+### Backend Port 8001 Conflict
+
+Check the port:
+
+```cmd
+netstat -ano | findstr :8001
+```
+
+Change `BACKEND_PORT` if required and update:
+
+```env
+VITE_API_BASE_URL=http://localhost:<new-port>
+```
+
+Then recreate the backend:
+
+```bash
+docker compose up -d --force-recreate backend
+```
+
+### Frontend Cannot Connect to Backend
+
+Check backend health:
+
+```bash
+curl http://localhost:8001/api/health
+```
+
+Verify the frontend environment variable:
+
+```env
+VITE_API_BASE_URL=http://localhost:8001
+```
+
+Restart Vite after changing environment variables.
+
+### CORS Problems
+
+Configure:
+
+```env
+CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+```
+
+Then recreate the backend:
+
+```bash
+docker compose up -d --force-recreate backend
+```
+
+### Nmap Not Found
+
+Check:
+
+```bash
+nmap --version
+```
+
+If the command fails:
+
+1. Install Nmap.
+2. Install Npcap on Windows.
+3. Add Nmap to PATH.
+4. Confirm `NMAP_PATH=nmap`.
+
+### Docker Changes Are Not Appearing
+
 Rebuild:
 
-```powershell
+```bash
 docker compose up -d --build
 ```
 
----
+Or force recreation:
 
-# 🔐 Security Engineering Principles
+```bash
+docker compose up -d --force-recreate backend
+```
 
-ASR-Cyber-Lab follows several defensive principles:
+### Frontend Dependencies Missing
 
-### 1. Explicit authorization
+Run:
 
-A target should be explicitly authorized before scanning.
+```bash
+cd frontend
+npm install
+```
 
-### 2. Controlled scan profiles
+## Stopping the Project
 
-The backend controls supported scan profiles rather than accepting arbitrary raw Nmap arguments from the client.
+Stop the frontend with:
 
-### 3. Evidence-based findings
+```text
+Ctrl + C
+```
 
-A service/version observation is not automatically treated as proof of a vulnerability.
+Stop Docker services:
 
-### 4. Auditability
+```bash
+docker compose down
+```
 
-Important actions are recorded through audit events.
+To also remove the PostgreSQL volume:
 
-### 5. Secret separation
+```bash
+docker compose down -v
+```
 
-Local secrets are stored in `.env` and excluded from version control.
+**Warning:** Removing volumes can delete local PostgreSQL data.
 
----
+## Fresh Clone Setup
 
-# 📈 Future Roadmap
+For a new machine:
 
-Potential future releases include:
+1. Install Git.
+2. Install Docker Desktop.
+3. Install Node.js.
+4. Install Python.
+5. Install Nmap and Npcap.
+6. Clone the repository.
+7. Enter the project directory.
+8. Create `.env`.
+9. Configure database credentials and secret key.
+10. Configure backend and frontend ports.
+11. Configure CORS.
+12. Configure Nmap.
+13. Configure the initial admin account.
+14. Start Docker services.
+15. Check the backend health endpoint.
+16. Install frontend dependencies.
+17. Start the frontend.
 
-- [ ] Historical scan comparison
-- [ ] Attack-surface trend dashboards
-- [ ] Scheduled recurring scans
-- [ ] Expanded CVE/CVSS enrichment
-- [ ] Role-based access control
-- [ ] Multi-project tenancy
-- [ ] Background scan job queues
-- [ ] Notification integrations
-- [ ] Remediation tracking
-- [ ] Advanced security metrics
-- [ ] Improved scan-result comparison
+Example:
 
----
+```bash
+git clone https://github.com/vardhan0666/ASR-Cyber-Lab.git
+cd ASR-Cyber-Lab
+docker compose up -d
+cd frontend
+npm install
+npm run dev
+```
 
-# 🎓 Portfolio Value
+## GitHub Development Workflow
 
-ASR-Cyber-Lab demonstrates practical experience in:
+Check changes:
 
-- Cybersecurity reconnaissance
-- Attack-surface management
-- TCP/IP and network-service concepts
-- Nmap integration
-- Security findings
-- Risk modeling
-- Secure API design
-- Authentication and authorization
-- PostgreSQL database design
-- React/TypeScript development
-- Dockerized application deployment
+```bash
+git status
+```
+
+Stage changes:
+
+```bash
+git add .
+```
+
+Commit:
+
+```bash
+git commit -m "Describe your changes"
+```
+
+Push:
+
+```bash
+git push
+```
+
+Update the local repository:
+
+```bash
+git pull
+```
+
+If frontend dependencies changed:
+
+```bash
+npm install
+```
+
+## What GitHub Does Not Store
+
+GitHub does not store:
+
+- Running Docker containers
+- Running databases
+- Local database records
+- `.env` secrets
+- `node_modules`
+- Python virtual environments
+- Generated build files
+- Temporary logs
+
+Only project source/configuration that is intentionally committed should be pushed.
+
+## Documentation Assets
+
+Documentation assets include:
+
+```text
+docs/
+├── presentation/
+│   └── ASR-Cyber-Lab-Presentation.pptx
+└── images/
+    ├── architecture.png
+    ├── dashboard.png
+    ├── scan-results.png
+    ├── findings.png
+    └── reports.png
+```
+
+Use real project screenshots for documentation. Avoid fake results.
+
+## Engineering Design
+
+The system follows a layered architecture:
+
+```text
+Presentation
+     ↓
+API
+     ↓
+Business Logic
+     ↓
+Security / Recon Engine
+     ↓
+Risk Engine
+     ↓
+Persistence
+     ↓
+PostgreSQL
+```
+
+This structure supports:
+
+- Maintenance
+- Testing
+- Extension
+- Debugging
+- Scalability
+
+## Defensive Design
+
+The core defensive sequence is:
+
+```text
+Target
+  ↓
+Authorization Check
+  ↓
+Scan
+```
+
+Authorization is checked before reconnaissance begins.
+
+## Security Pipeline
+
+```text
+Authorized Target
+      ↓
+Nmap Recon
+      ↓
+Host Discovery
+      ↓
+Service Discovery
+      ↓
+Security Analysis
+      ↓
+Risk Calculation
+      ↓
+Security Findings
+      ↓
+Remediation
+      ↓
+JSON / PDF Report
+```
+
+## Current Validation
+
+The current validation focuses on authorized local testing.
+
+Example:
+
+```text
+127.0.0.1
+```
+
+A local application may expose:
+
+```text
+8000/tcp
+```
+
+with:
+
+```text
+Uvicorn
+```
+
+The platform can normalize the discovered service, perform security analysis, calculate contextual risk, create findings, and generate reports.
+
+Exact results vary according to the services running on the test machine.
+
+## Future Roadmap
+
+### AI-Assisted Remediation
+
+Planned capabilities include:
+
+- Natural-language remediation
+- Finding prioritization
+- Report summaries
+- Context-aware recommendations
+
+### Threat Intelligence
+
+Potential integrations include:
+
+- CVE information
+- Threat feeds
+- Vulnerability databases
+- Reputation information
+
+### Cloud Security
+
+Future support may include:
+
+- AWS
+- Azure
+- Google Cloud
+
+### Continuous Monitoring
+
+Planned capabilities:
+
+- Scheduled scans
+- Change detection
+- Exposure tracking
+- Security alerts
+
+### SIEM / SOC Integration
+
+Potential integrations include security monitoring and SOC workflows.
+
+## Long-Term Vision
+
+The long-term security platform vision is:
+
+```text
+ASR-Cyber-Lab
+"What is exposed?"
+        ↓
+SENTINEL-X
+"What is happening?"
+        ↓
+AERION
+"What does it mean?"
+```
+
+The larger pipeline becomes:
+
+```text
+Attack Surface
+      ↓
+Security Telemetry
+      ↓
+Threat Detection
+      ↓
+Risk Analysis
+      ↓
+Security Intelligence
+      ↓
+Defensive Response
+```
+
+## Project Goals
+
+ASR-Cyber-Lab combines:
+
+- Cybersecurity
+- Network reconnaissance
+- Secure software engineering
+- Full-stack development
+- REST API development
+- Database engineering
+- Authentication
+- Risk analysis
 - Security reporting
-- Audit logging
-- Full-stack software engineering
+- Docker
+- DevOps
+- Interactive visualization
+- 3D web development
 
-### One-line interview pitch
+## Learning Outcomes
 
-> **"I built a defensive attack-surface management platform that converts authorized Nmap reconnaissance into persistent security findings, transparent risk scores, reports, and auditable workflows."**
+### Cybersecurity
 
----
+- Network reconnaissance
+- Attack-surface discovery
+- Security analysis
+- Risk assessment
+- Defensive security practices
 
-# 🔗 Repository
+### Backend
 
-**GitHub:**  
+- FastAPI
+- REST APIs
+- Authentication
+- Database integration
+- Service architecture
+
+### Frontend
+
+- React
+- TypeScript
+- Tailwind CSS
+- Data visualization
+- Three.js
+
+### Infrastructure
+
+- Docker
+- Docker Compose
+- PostgreSQL
+- Environment configuration
+
+### Software Engineering
+
+- Layered architecture
+- Testing
+- Documentation
+- Git/GitHub workflow
+- Maintainable project structure
+
+## Security Notes
+
+Always:
+
+- Scan only authorized targets.
+- Respect organizational policies.
+- Follow defined testing scope.
+- Protect credentials and API keys.
+- Avoid committing secrets.
+- Use responsible disclosure for discovered vulnerabilities.
+
+Never use the platform to scan or attack systems without explicit permission.
+
+## Disclaimer
+
+ASR-Cyber-Lab is provided for authorized defensive security testing and educational purposes only.
+
+Do not scan, probe, attack, or otherwise interact with systems without explicit authorization.
+
+The developer is not responsible for misuse of this project.
+
+Users are responsible for following:
+
+- Applicable laws
+- Organizational policies
+- Responsible disclosure practices
+- Scope restrictions
+- Authorized testing rules
+
+Use the platform responsibly and only within environments where you have permission.
+
+## Author
+
+### Vardhan
+
+CSE Student
+
+Interests:
+
+- Cybersecurity
+- AI
+- Software Engineering
+- Full-Stack Development
+- Security Research
+- Technology
+
+GitHub:
+https://github.com/vardhan0666
+
+Project:
 https://github.com/vardhan0666/ASR-Cyber-Lab
 
+### Support
+
+If you find the project useful:
+
+- Star the repository
+- Fork the project
+- Report issues
+- Suggest improvements
+- Contribute responsibly
+
 ---
 
-# 👨‍💻 Author
-
-**Vardhan**
-
-B.Tech Computer Science Engineering  
-Cybersecurity • AI • Software Engineering
-
----
-
-## ⚖️ Legal Notice
-
-ASR-Cyber-Lab is a defensive cybersecurity engineering project.
-
-**Only use this software against systems you own or have explicit authorization to assess.**
-
-The author does not endorse unauthorized scanning, exploitation, credential attacks, malware deployment, persistence, evasion, or disruption of third-party systems.
+**Discover the attack surface. Understand the risk. Reduce the exposure.**
